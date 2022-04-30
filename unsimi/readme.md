@@ -72,8 +72,8 @@ be redirected to another file:
 ```
 ▶ cat newthings.txt | unsimi things.txt > added-lines.txt
 ▶ cat added-lines.txt
-Three
-Four
+cars4.example.com
+example.net
 ```
 
 ## Flags
