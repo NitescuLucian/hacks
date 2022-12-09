@@ -93,3 +93,5 @@ go install -v github.com/NitescuLucian/hacks/unsimi@latest
 
 - https://github.com/tomnomnom/anew
 - https://github.com/adrg/strutil#hamming
+
+Contact me at [@LucianNitescu](https://twitter.com/LucianNitescu)
