@@ -22,7 +22,7 @@ http://example.com/?a=he<script>
 You can install using go:
 
 ```
-go install -v github.com/NitescuLucian/hacks/urlop@latest
+go install -v github.com/NitescuLucian/hacks/qscape@latest
 ```
 
 Contact me at [@LucianNitescu](https://twitter.com/LucianNitescu)
