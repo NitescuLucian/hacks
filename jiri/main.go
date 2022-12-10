@@ -150,6 +150,7 @@ func main() {
 				Summary: summary,
 			},
 		}
+
 		// Marshal JSON body into a byte slice
 		body, err := json.Marshal(burp0JSON)
 		if err != nil {
