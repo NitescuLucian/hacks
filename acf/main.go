@@ -22,8 +22,7 @@ func main() {
 		// Resolve the IP address of the subdomain
 		ip, err := net.LookupIP(input)
 		if err != nil {
-			fmt.Printf("Error resolving IP address for %s: %s\n", input, err)
-			os.Exit(1)
+			continue
 		}
 
 		// Check if the IP belongs to Cloudflare's range of IPs
