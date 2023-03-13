@@ -11,37 +11,56 @@ import (
 	"strings"
 )
 
+func logic(url_entered string) {
+
+	//check for .com/ , remove the last / if it exists -> https://example.com/ -> https://example.com and we add /wp-json
+	if strings.HasSuffix(url_entered, "/") {
+		url_entered = strings.TrimSuffix(url_entered, "/")
+	}
+
+	url := strings.TrimSpace(url_entered)
+	// Make HTTP GET request to the JSON API endpoint
+	response, err := http.Get(url + "/wp-json")
+	if err != nil {
+		panic(err)
+	}
+	defer response.Body.Close()
+
+	// Read response body
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	// Parse JSON response
+	var jsonData map[string]interface{}
+	err = json.Unmarshal(body, &jsonData)
+	if err != nil {
+		panic(err)
+	}
+
+	// Extract links from JSON response
+	links := extractLinks(jsonData)
+
+	// Print links
+	for _, link := range links {
+		fmt.Println(link)
+	}
+}
+
 func main() {
 
-	scanner := bufio.NewScanner(os.Stdin)
-	for scanner.Scan() {
-		url := strings.TrimSpace(scanner.Text())
-		// Make HTTP GET request to the JSON API endpoint
-		response, err := http.Get(url + "/wp-json")
-		if err != nil {
-			panic(err)
-		}
-		defer response.Body.Close()
+	/* If there is url supplied from cmdline, use it, if not then make use of stdin */
+	if len(os.Args) > 1 {
+		fmt.Println("Targeting -> ", os.Args[1], " recieved from command line")
+		logic(os.Args[1])
 
-		// Read response body
-		body, err := ioutil.ReadAll(response.Body)
-		if err != nil {
-			panic(err)
-		}
-
-		// Parse JSON response
-		var jsonData map[string]interface{}
-		err = json.Unmarshal(body, &jsonData)
-		if err != nil {
-			panic(err)
-		}
-
-		// Extract links from JSON response
-		links := extractLinks(jsonData)
-
-		// Print links
-		for _, link := range links {
-			fmt.Println(link)
+	} else {
+		scanner := bufio.NewScanner(os.Stdin)
+		for scanner.Scan() {
+			fmt.Println("Targeting -> ", scanner.Text(), " recieved from stdin")
+			url := strings.TrimSpace(scanner.Text())
+			logic(url)
 		}
 	}
 
