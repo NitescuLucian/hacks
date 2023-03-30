@@ -15,23 +15,21 @@ import (
 	"time"
 )
 
-func generateHTMLTagsOrderHash(htmlBytes []byte) string {
+func generateHTMLOutlineHash(htmlBytes []byte) string {
     doc, err := goquery.NewDocumentFromReader(bytes.NewReader(htmlBytes))
     if err != nil {
         fmt.Fprintln(os.Stderr, err)
         os.Exit(1)
     }
 
-    var tagsOrder string
-    doc.Each(func(i int, s *goquery.Selection) {
-        // Use a depth-first traversal to visit all the nodes
-        s.Find("*").Each(func(i int, s *goquery.Selection) {
-            tagsOrder += s.Nodes[0].Data
-        })
+    var outlineText string
+    doc.Find("*").Each(func(i int, s *goquery.Selection) {
+        outlineText += s.Get(0).Data + " "
     })
 
-	hash := sha256.Sum256([]byte(tagsOrder))
-	hashStr := fmt.Sprintf("%x", hash[:4]) 
+    hash := sha256.Sum256([]byte(outlineText))
+    hashStr := fmt.Sprintf("%x", hash[:4])
+
     return hashStr
 }
 
@@ -114,24 +112,25 @@ func main() {
 				if err != nil {
 					return
 				}
+				body, err := io.ReadAll(resp.Body)
+				if err != nil {
+					// handle error
+					return
+				}
 				var buf bytes.Buffer
 				_, err = io.Copy(&buf, resp.Body)
 				if err != nil {
 					// handle error
 					return
 				}
-				body, err := io.ReadAll(resp.Body)
-				if err != nil {
-					// handle error
-					return
-				}
 				bodyLength := buf.Len()
+				
 
 				// this aproximates to the nearest hundreds so that you will not duplicate the outputs
 				bodyLength = ((bodyLength + 50) / 100) * 100
 
 				if resp.StatusCode != 404 {
-					fmt.Printf("%s [sc:%d] [al:%d] [h:%s]\n", url, resp.StatusCode, bodyLength, generateHTMLTagsOrderHash(body))
+					fmt.Printf("%s [sc:%d] [al:%d] [h:%s]\n", url, resp.StatusCode, bodyLength, generateHTMLOutlineHash(body))
 				}
 				resp.Body.Close()
 			}(target, item)
