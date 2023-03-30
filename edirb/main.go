@@ -7,11 +7,33 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"github.com/PuerkitoBio/goquery"
+	"crypto/sha256"
 	"os"
 	"strings"
 	"sync"
 	"time"
 )
+
+func generateHTMLTagsOrderHash(htmlBytes []byte) string {
+    doc, err := goquery.NewDocumentFromReader(bytes.NewReader(htmlBytes))
+    if err != nil {
+        fmt.Fprintln(os.Stderr, err)
+        os.Exit(1)
+    }
+
+    var tagsOrder string
+    doc.Each(func(i int, s *goquery.Selection) {
+        // Use a depth-first traversal to visit all the nodes
+        s.Find("*").Each(func(i int, s *goquery.Selection) {
+            tagsOrder += s.Nodes[0].Data
+        })
+    })
+
+	hash := sha256.Sum256([]byte(tagsOrder))
+	hashStr := fmt.Sprintf("%x", hash[:4]) 
+    return hashStr
+}
 
 func main() {
 	threads := flag.Int("t", 100, "Number of threads for requests")
@@ -98,13 +120,18 @@ func main() {
 					// handle error
 					return
 				}
+				body, err := io.ReadAll(resp.Body)
+				if err != nil {
+					// handle error
+					return
+				}
 				bodyLength := buf.Len()
 
 				// this aproximates to the nearest hundreds so that you will not duplicate the outputs
 				bodyLength = ((bodyLength + 50) / 100) * 100
 
 				if resp.StatusCode != 404 {
-					fmt.Printf("%s [sc:%d] [al:%d]\n", url, resp.StatusCode, bodyLength)
+					fmt.Printf("%s [sc:%d] [al:%d] [h:%s]\n", url, resp.StatusCode, bodyLength, generateHTMLTagsOrderHash(body))
 				}
 				resp.Body.Close()
 			}(target, item)

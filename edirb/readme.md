@@ -3,7 +3,7 @@
 
 ## Why? 
 
-Economic Directory Buster (edirb) for when you need to directory bruteforce more then 10k hosts but without making too many requests on each host.
+Economic Directory Buster (edirb) for when you need to directory brute force more than 10k hosts but without making too many requests on each host.
 
 ```
 sc = status code
