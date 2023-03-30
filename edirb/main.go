@@ -18,8 +18,7 @@ import (
 func generateHTMLOutlineHash(htmlBytes []byte) string {
     doc, err := goquery.NewDocumentFromReader(bytes.NewReader(htmlBytes))
     if err != nil {
-        fmt.Fprintln(os.Stderr, err)
-        os.Exit(1)
+        return
     }
 
     var outlineText string
