@@ -113,15 +113,7 @@ func main() {
 					// handle error
 					return
 				}
-				var buf bytes.Buffer
-				_, err = io.Copy(&buf, resp.Body)
-				if err != nil {
-					// handle error
-					return
-				}
-				bodyLength := buf.Len()
-				
-
+				bodyLength := len(body)
 				// this aproximates to the nearest hundreds so that you will not duplicate the outputs
 				bodyLength = ((bodyLength + 50) / 100) * 100
 
