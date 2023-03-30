@@ -18,17 +18,14 @@ import (
 func generateHTMLOutlineHash(htmlBytes []byte) string {
     doc, err := goquery.NewDocumentFromReader(bytes.NewReader(htmlBytes))
     if err != nil {
-        return ""
+        return "00000000"
     }
-
     var outlineText string
     doc.Find("*").Each(func(i int, s *goquery.Selection) {
         outlineText += s.Get(0).Data + " "
     })
-
     hash := sha256.Sum256([]byte(outlineText))
     hashStr := fmt.Sprintf("%x", hash[:4])
-
     return hashStr
 }
 
