@@ -138,7 +138,8 @@ func main() {
 	//Loop through the hosts to print out the ip address and port
 	for _, host := range n.Host {
 		for _, port := range host.Ports.Port {
-			fmt.Printf("%s:%s\n", host.Hostnames.Hostname.Name, port.PortId)
+			fmt.Printf("h:%s:%s\n", host.Hostnames.Hostname.Name, port.PortId)
+			fmt.Printf("a:%s:%s\n", host.Address.Addr, port.PortId)
 		}
 	}
 }
