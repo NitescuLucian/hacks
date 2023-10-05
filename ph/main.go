@@ -58,7 +58,12 @@ func extractParametersFromURL(url string) {
 
 	parameters := extractParametersFromString(htmlContent)
 	for name, value := range parameters {
-		fmt.Printf("%s?%s=%s\n", url, name, value)
+		if strings.Contains(url, "?") {
+			fmt.Printf("%s&%s=%s\n", url, name, value)
+		} else {
+			fmt.Printf("%s?%s=%s\n", url, name, value)
+		}
+
 	}
 }
 
